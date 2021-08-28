@@ -5,7 +5,7 @@ intents = discord.Intents(messages=True, guilds=True, reactions=True, members=Tr
 bot_main = commands.Bot(command_prefix='!',intents=intents)
 bot_main.channel_name="test-chat"
 bot_main.guess_word="test"
-bot_main.lives=5
+bot_main.lives=6
 with open("TOKEN_KEY.json") as key:
     token_data = json.load(key)
 TOKEN = token_data['TOKEN_HANGMAN_GAME']
@@ -27,13 +27,13 @@ async def guess(ctx,args):
     if args in bot_main.guess_word:
         await channel.send("guessed")
     else:
-        print(lives_left)
         await channel.send("not guessed")
-        # str_hang=f"`{' '*4}_____\n{' '*4}|{' '*4}|\n{' '*4}|{' '*4}\n{' '*4}|{' '*4}\n{' '*4}|{' '*4}\n{' '*4}|{' '*4}\n{' '*4}|{' '*4}\n ___|___{' '*4}`"
-        str_hang=f"`{' '*4}_____\n`"
+        str_hang=f"`{' '*4}______\n`"
         for i in range(6):
-            str_hang+=f"`{' '*2}|{' '*4}{lives_left if (lives_left<=5 and lives_left>3) else ' ' }\n`"
+            str_hang+=f"`{' '*2}|{' '*2 if lives_left==3 else (' '*4 if lives_left==1 else ' '*5)}{'|' if ((lives_left<=6 and lives_left>=5) or lives_left==2) else '' }{'O' if (lives_left==4) else ''}{'___|___' if (lives_left==3) else ''}{'| |' if lives_left==1 else ''}\n`"
+            print(lives_left)
             lives_left-=1
+        str_hang+=f"`__|__\n`"
         await channel.send(str_hang)
         
         
