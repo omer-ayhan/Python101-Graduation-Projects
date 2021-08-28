@@ -6,12 +6,12 @@ intents = discord.Intents(messages=True, guilds=True, reactions=True, members=Tr
 bot = commands.Bot(command_prefix='!',intents=intents)
 with open("TOKEN_KEY.json") as key:
     token_data = json.load(key)
-TOKEN = token_data['TOKEN']
-bot.stop_timer = True
-bot.channel_name = "genelchat"
+TOKEN = token_data['TOKEN_POMODORO']
+bot.start_times = True
+bot.channel_name = "pomodoro-bot"
 
 def check_cmd(msg):
-    if bot.stop_timer==False:
+    if bot.start_times==False:
         return
     else:
         return msg
@@ -35,19 +35,19 @@ async def p_start(ctx,s1,s2):
     s1_str = int(s1/60)
     s2_str = int(s2/60)
     print(s1_str, s2_str)
-    bot.stop_timer = True
+    bot.start_times = True
     str = f"{s1_str} minutes study time\n{s2_str} minutes break time {user}"
     await channel.send(str)
-    print(bot.stop_timer)
-    while bot.stop_timer:
+    print(bot.start_times)
+    while bot.start_times:
         check_cmd(await asyncio.sleep(s1))
         await channel.send(check_cmd(f"Study time over:laughing: {s2_str} minutes break time :sunglasses: {user}"))
         check_cmd(await asyncio.sleep(s1))
         await channel.send(check_cmd(f"Break time over:weary: {s1_str} minutes study time :nerd: {user}"))
 
 @bot.command()
-async def p_durdur(ctx):
-    bot.stop_timer=False
+async def p_stop(ctx):
+    bot.start_times=False
     user = ctx.author.mention
     channel = discord.utils.get(ctx.guild.text_channels, name=bot.channel_name)
     await channel.send(f"Pomodoro stopped {user}")
