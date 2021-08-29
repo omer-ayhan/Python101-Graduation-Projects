@@ -5,7 +5,7 @@ from discord.ext.commands.core import bot_has_permissions, has_permissions
 import hangman_shape
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
 bot_main = commands.Bot(command_prefix='!',intents=intents)
-bot_main.channel_name="test-chat"
+bot_main.channel_name="hangman-game"
 bot_main.game_word=""
 bot_main.guess_word=""
 bot_main.attempt=0
@@ -69,11 +69,11 @@ async def guess(ctx,answer):
                 await channel.send(f"`{hangman_shape.HANGMAN_PICS[bot_main.attempt]}`")
                 bot_main.attempt += 1
                 if bot_main.attempt==7:
-                    await channel.send(f"'{user} game over:japanese_ogre:'")
+                    await channel.send(f"'{user} game over:smiling_imp: '")
                     bot_main.game_word=""
                     bot_main.guess_word=""
                 else:
-                    await channel.send(f"{7-bot_main.attempt} attempts remaining")
+                    await channel.send(f"{len(hangman_shape.HANGMAN_PICS)-bot_main.attempt} attempts remaining")
         else:
             await channel.send(f"please set a word to guess first {user}")
     else:
@@ -81,7 +81,7 @@ async def guess(ctx,answer):
         
         
 @guess.error
-async def pomodoro_error(ctx, error):
+async def guess_error(ctx, error):
     user = ctx.author.mention
     channel = discord.utils.get(ctx.guild.text_channels, name=bot_main.channel_name)
     if isinstance(error, commands.MissingRequiredArgument):

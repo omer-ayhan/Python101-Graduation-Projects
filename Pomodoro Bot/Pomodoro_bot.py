@@ -29,21 +29,24 @@ async def on_command_error(ctx, error):
 async def p_start(ctx,s1,s2):
     channel = discord.utils.get(ctx.guild.text_channels, name=bot.channel_name)
     user = ctx.author.mention
-    s1 = int(s1) * 60
-    s2 = int(s2) * 60
-    print(type(s1), type(s2))
-    s1_str = int(s1/60)
-    s2_str = int(s2/60)
-    print(s1_str, s2_str)
-    bot.start_times = True
-    str = f"{s1_str} minutes study time\n{s2_str} minutes break time {user}"
-    await channel.send(str)
-    print(bot.start_times)
-    while bot.start_times:
-        check_cmd(await asyncio.sleep(s1))
-        await channel.send(check_cmd(f"Study time over:laughing: {s2_str} minutes break time :sunglasses: {user}"))
-        check_cmd(await asyncio.sleep(s1))
-        await channel.send(check_cmd(f"Break time over:weary: {s1_str} minutes study time :nerd: {user}"))
+    if s1.isnumeric() and s2.isnumeric():
+        s1 = int(s1) * 60
+        s2 = int(s2) * 60
+        print(type(s1), type(s2))
+        s1_str = int(s1) / 60
+        s2_str = int(s2) / 60
+        print(s1_str, s2_str)
+        bot.start_times = True
+        str = f"{s1_str} minutes study time\n{s2_str} minutes break time {user}"
+        await channel.send(str)
+        print(bot.start_times)
+        while bot.start_times:
+            check_cmd(await asyncio.sleep(s1))
+            await channel.send(check_cmd(f"Study time over:laughing: {s2_str} minutes break time :sunglasses: {user}"))
+            check_cmd(await asyncio.sleep(s1))
+            await channel.send(check_cmd(f"Break time over:weary: {s1_str} minutes study time :nerd: {user}"))
+    else:
+        await channel.send(f'Please enter all arguments as numbers {user}')
 
 @bot.command()
 async def p_stop(ctx):
@@ -58,6 +61,4 @@ async def pomodoro_error(ctx, error):
     channel = discord.utils.get(ctx.guild.text_channels, name=bot.channel_name)
     if isinstance(error, commands.MissingRequiredArgument):
         await channel.send(f"Please write all arguments {user}")
-    elif isinstance(error, commands.CommandInvokeError):
-        await channel.send(f"Please enter all arguments as numbers {user}")
 bot.run(TOKEN)
