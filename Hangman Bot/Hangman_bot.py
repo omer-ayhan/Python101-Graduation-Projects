@@ -1,6 +1,7 @@
 import discord
 import json
 from discord.ext import commands
+from discord.ext.commands.core import bot_has_permissions, has_permissions
 import hangman_shape
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
 bot_main = commands.Bot(command_prefix='!',intents=intents)
@@ -20,17 +21,27 @@ async def on_command_error(ctx, error):
     user = ctx.author.mention
     if isinstance(error, commands.CommandNotFound):
         await ctx.send(f"Unknown command {user}")
-
     
-
 @bot_main.command()
+@bot_has_permissions(manage_messages=True)
+@has_permissions(manage_messages=True)
 async def set_guess(ctx, word):
     channel = discord.utils.get(ctx.guild.text_channels, name=bot_main.channel_name)
     user = ctx.author.mention
-    bot_main.game_word = word.strip()
-    bot_main.game_word = word.guessp()
+    if "||" in word:
+        word=word.replace("||",'')
+        await channel.purge(limit=1)
+        if len(word)>1:
+            bot_main.game_word = word.strip()
+            bot_main.temp_word = word.strip()
+            bot_main.guess_word = ""
+            print(bot_main.game_word)
+            await channel.send(f"{user} set a new word")
+        else:
+            await channel.send(f"{user} the word needs to be longer")
+    else:
+        await channel.send(f"Please set your word with spoiler tags(`||your message||`){user}")
 
-    await channel.send(f"{user} set the word")
     
     
 @bot_main.command()
@@ -40,21 +51,29 @@ async def guess(ctx,answer):
     print(answer)
     if len(answer)==1:
         if len(bot_main.game_word)>1:
-            if (answer in bot_main.guess_word):
-                bot_main.guess_word += answer             
+            if (answer in bot_main.temp_word):
+                bot_main.guess_word += answer
+                print(bot_main.guess_word)
+                bot_main.temp_word=bot_main.temp_word.replace(answer,'',1)          
+                print(bot_main.temp_word)
                 await channel.send(f"'{answer}' guessed one:star_struck:  {user}")
-                if bot_main.guess_word==bot_main.game_word:
+                if len(bot_main.guess_word)==len(bot_main.game_word):
                     await channel.send(f"'{user} won the game :star_struck:'")
                     bot_main.game_word=""
                     bot_main.guess_word=""
-                    
-                return
+                    await channel.send(f"set a new word")
+
             else:
                 await channel.send(f"'{answer}' wrong:japanese_ogre:  {user}")
                 print(bot_main.attempt)
                 await channel.send(f"`{hangman_shape.HANGMAN_PICS[bot_main.attempt]}`")
                 bot_main.attempt += 1
-                await channel.send(f"{7-bot_main.attempt} attempts remaining")
+                if bot_main.attempt==7:
+                    await channel.send(f"'{user} game over:japanese_ogre:'")
+                    bot_main.game_word=""
+                    bot_main.guess_word=""
+                else:
+                    await channel.send(f"{7-bot_main.attempt} attempts remaining")
         else:
             await channel.send(f"please set a word to guess first {user}")
     else:
