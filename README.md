@@ -3,7 +3,7 @@ This is a repository for graduation projects. You can find various projects for 
 
 :triangular_flag_on_post: Table of Contents
 -----
-* [<b>Table of Contents</b>](ttps://github.com/omer-ayhan/Python101-Graduation-Projects##triangular_flag_on_post-table-of-contents)
+* [<b>Table of Contents</b>](https://github.com/omer-ayhan/Python101-Graduation-Projects#triangular_flag_on_post-table-of-contents)
 * [<b>Setup for Bots</b>](https://github.com/omer-ayhan/Python101-Graduation-Projects#robot-setup-for-bots)
 * [<b>Features for Bots</b>](https://github.com/omer-ayhan/Python101-Graduation-Projects#sparkles-features)
 
